@@ -1,9 +1,9 @@
 
-from rest_framework import Serializers
+from rest_framework import serializers
 
-from keycloak_with_multiple_roles.user.models import User, Parent, Student
+from keycloak_with_multiple_roles.users.models import User, Parent, Student
 
-class UserSerializer(serializers.ModelSerializer[USer]):
+class UserSerializer(serializers.ModelSerializer[User]):
   """ Basic User serializer with essestial fields only"""
 
   class Meta:
@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer[USer]):
       "user_type",
       "is_active",
       "date_joined",
-      "url"
+      "url",
     ]
     extra_kwargs = {
       "url": {"view_name":"api:user-detail", "lookup_field": "username"},
@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer[USer]):
       "date_joined": {"read_only":True},
     }
 
-class UserMininmalSerializer(serializer.ModelSerializer[User]):
+class UserMininmalSerializer(serializers.ModelSerializer[User]):
   """ Minimal User serializer for nested representation """
 
   class Meta:
@@ -33,14 +33,14 @@ class UserMininmalSerializer(serializer.ModelSerializer[User]):
     fields = ["id", "uuid", "username", "email", "name", "user_type"]
     read_only_fields = fields
 
-class UserCreateSerializer(serialiers.ModelSerializer[User]):
+class UserCreateSerializer(serializers.ModelSerializer[User]):
   """ creating for users creation"""
 
   password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
   password_confirm = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
   class Meta:
-    model = user
+    model = User
     fields = ["username", "email", "name", "password", "password_confirm", "user_type"]
 
     def validate(self, attrs):
@@ -60,13 +60,13 @@ class UserCreateSerializer(serialiers.ModelSerializer[User]):
       user.save()
       return user
 
-class studentMinimalSerializer(serializers.ModelSerializer):
+class StudentMinimalSerializer(serializers.ModelSerializer):
   """ Minimal student serializer for nested serialization"""
 
   student_email = serializers.EmailField(source="student_link.email", read_only=True)
   student_name = serializers.CharField(source="student_link.name", read_only=True)
   student_username = serializers.CharField(source="student_link.username", read_only=True)
-  is_linked = serrializers.SerializerMethodField()
+  is_linked = serializers.SerializerMethodField()
 
   class Meta:
     model = Student
@@ -74,7 +74,7 @@ class studentMinimalSerializer(serializers.ModelSerializer):
 
   def get_is_linkedin(self, obj):
     """ check if student is linked to parent """
-    return onj.is_linked_to_parent()
+    return obj.is_linked_to_parent()
 
 class StudentSerializer(serializers.ModelSerializer):
   """ Full student serializer with all fields"""
@@ -86,8 +86,8 @@ class StudentSerializer(serializers.ModelSerializer):
   user_id = serializers.IntegerField(source='student_link.id', read_only=True)
 
 #   Parent information
-  parent = serializers.SerailizerMethodField()
-  parent_info = serailizers.SerializerMethodField()
+  parent = serializers.SerializerMethodField()
+  parent_info = serializers.SerializerMethodField()
 
   #computed fields
   is_linked = serializers.SerializerMethodField()
@@ -100,7 +100,7 @@ class StudentSerializer(serializers.ModelSerializer):
       "user",
       "user_id",
       "parent",
-      "parent_info"
+      "parent_info",
       "grade",
       "class_name",
       "is_linked",
@@ -140,8 +140,8 @@ class StudentCreateSerializer(serializers.ModelSerializer):
 
   #user Creation fields
   email = serializers.EmailField(required=True)
-  username = serializer.CharField(required=True)
-  name = serializer.CharField(required=True)
+  username = serializers.CharField(required=True)
+  name = serializers.CharField(required=True)
   password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
   #student fields
@@ -275,8 +275,8 @@ class ParentCreatSerializer(serializers.ModelSerializer):
 
   #user creation fields
   email = serializers.EmailField(required=True)
-  username = serializer.CharField(required=True)
-  name = serializer.CharField(required=True)
+  username = serializers.CharField(required=True)
+  name = serializers.CharField(required=True)
   password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
 
   class Meta:
