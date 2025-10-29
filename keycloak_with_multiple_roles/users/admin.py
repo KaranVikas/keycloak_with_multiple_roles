@@ -19,7 +19,7 @@ class UserAdmin(auth_admin.UserAdmin):
   fieldsets = (
     (None, {"fields": ("username", "password")}),
     (_("Personal info"), {"fields": ("name", "email", "user_type")}),
-    (_("Payment"), {"fields": ("is_paid", "customer_id")}),
+    (_("Payment"), {"fields": ( )}),
     (
       _("Permissions"),
       {
@@ -34,8 +34,8 @@ class UserAdmin(auth_admin.UserAdmin):
     ),
     (_("Important dates"), {"fields": ("last_login", "date_joined")}),
   )
-  list_display = ["email", "username", "name", "user_type", "is_paid", "is_superuser"]
-  list_filter = ["user_type", "is_paid", "is_staff", "is_superuser", "is_active"]
+  list_display = ["email", "username", "name", "user_type",  "is_superuser"]
+  list_filter = ["user_type",  "is_staff", "is_superuser", "is_active"]
   search_fields = ["name", "email", "username"]
   ordering = ["-date_joined"]
 
@@ -43,21 +43,20 @@ class UserAdmin(auth_admin.UserAdmin):
 @admin.register(Parent)
 class ParentAdmin(admin.ModelAdmin):
   list_display = [
-    "parent_link",
+    "user",
     "family_code",
     "phone_number",
-    "country",
     "get_students_count",
     "created_at"
   ]
-  list_filter = ["country", "account_emails", "marketing", "student_updates", "created_at"]
+  list_filter = [    "created_at"]
   search_fields = ["parent_link__email", "parent_link__username", "family_code", "phone_number"]
   readonly_fields = ["uuid", "family_code", "created_at", "updated_at"]
 
   fieldsets = (
     (_("User Link"), {"fields": ("parent_link", "uuid", "family_code")}),
-    (_("Contact Information"), {"fields": ("phone_number", "address", "country", "state")}),
-    (_("Email Preferences"), {"fields": ("account_emails", "marketing", "student_updates")}),
+    (_("Contact Information"), {"fields": ("phone_number", "address",  "state")}),
+    (_("Email Preferences"), {"fields": (  )}),
     (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
   )
 
@@ -85,13 +84,13 @@ class StudentAdmin(admin.ModelAdmin):
     "student_code",
     "parent_family_code"
   ]
-  readonly_fields = ["uuid", "student_code", "qr_code", "created_at", "updated_at"]
+  readonly_fields = ["uuid", "student_code",  "created_at", "updated_at"]
 
   fieldsets = (
     (_("User Link"), {"fields": ("student_link", "uuid", "student_code")}),
     (_("Parent Link"), {"fields": ("parent_family_code",)}),
     (_("Academic Information"), {"fields": ("grade", "class_name")}),
-    (_("Media"), {"fields": ("avatar_image", "qr_code")}),
+    (_("Media"), {"fields": ( )}),
     (_("Timestamps"), {"fields": ("created_at", "updated_at")}),
   )
 

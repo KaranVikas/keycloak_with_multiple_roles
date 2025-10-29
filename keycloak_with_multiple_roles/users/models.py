@@ -56,7 +56,7 @@ class User(AbstractUser):
   class Meta:
     verbose_name = _("User")
     verbose_name_plural = _("Users")
-    ordering = ['-data_joined']
+    ordering = ['-date_joined']
 
   def get_absolute_url(self) -> str:
       """ Get URL for user's detail view."""
@@ -76,12 +76,12 @@ class Parent(TimestampModel):
   uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
   # one to one relationship with user
 
-  parent_link = models.OneToOneField(
-    User,
-    on_delete= models.CASCADE,
-    related_name='parent_profile',
-    primary_key=True
-  )
+  # parent_link = models.OneToOneField(
+  #   User,
+  #   on_delete= models.CASCADE,
+  #   related_name='parent_profile',
+  #   primary_key=True
+  # )
 
   # unique family code for parent
   family_code = models.CharField(
@@ -100,14 +100,6 @@ class Parent(TimestampModel):
     primary_key=True
   )
 
-  family_code = models.CharField(_(
-    "Family Code"),
-    max_length=10,
-    unique=True,
-    default=generate_family_code,
-    editable=False,
-    help_text="Unique family code for parent."
-  )
   phone_number = models.CharField(_("Phone Number"), max_length=15, blank=True)
   address = models.TextField(_("Address"), blank=True)
 
@@ -133,7 +125,7 @@ class Parent(TimestampModel):
     """
     return Student.objects.filter(parent_family_code=self.family_code)
 
-  def get_student_count(self):
+  def get_students_count(self):
     """ Get total number of students linked to parents """
     return self.get_all_students().count()
 
@@ -213,13 +205,14 @@ class Student(TimestampModel):
   )
 
   #Auto-generated student code
-  student_code = models.CharField()
-  _("student Code"),
-  max_length=10,
-  unique=True,
-  default=generate_student_code,
-  editable=False,
-  help_text=_("Auto-generated student code")
+  student_code = models.CharField(
+    _("student Code"),
+    max_length=10,
+    unique=True,
+    default=generate_student_code,
+    editable=False,
+    help_text=_("Auto-generated student code")
+  )
 
   #grade and class information
   grade = models.CharField(
@@ -241,7 +234,7 @@ class Student(TimestampModel):
   class Meta:
     verbose_name = _("Student")
     verbose_name_plural = _("Students")
-    ordering = ['created_at']
+    ordering = ['-created_at']
     indexes = [
       models.Index(fields=['parent_family_code']),
       models.Index(fields=['student_code']),
